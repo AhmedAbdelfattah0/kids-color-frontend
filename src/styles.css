@@ -1,0 +1,45 @@
+/* Tailwind CSS directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global styles */
+@layer base {
+  body {
+    @apply font-body bg-background text-text;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+/* Print styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .printable-image,
+  .printable-image * {
+    visibility: visible;
+  }
+
+  .printable-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+  }
+
+  .printable-image img {
+    max-width: 100%;
+    max-height: 100vh;
+    object-fit: contain;
+  }
+}

@@ -1,0 +1,102 @@
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+  <div class="text-center mb-8">
+    <h1 class="text-3xl md:text-5xl font-heading text-primary mb-2">
+      Generate a Coloring Page
+    </h1>
+    <p class="text-muted">
+      Type anything you'd like to color!
+    </p>
+  </div>
+
+  <!-- Generator Form -->
+  @if (!generatorService.currentImage()) {
+    <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-8">
+      <form (submit)="onGenerate(); $event.preventDefault()">
+        <!-- Keyword Input -->
+        <div class="mb-6">
+          <label for="keyword" class="block text-sm font-semibold text-text mb-2">
+            What would you like to color?
+          </label>
+          <div class="flex gap-3">
+            <input
+              id="keyword"
+              type="text"
+              [(ngModel)]="keyword"
+              [ngModelOptions]="{standalone: true}"
+              placeholder="e.g., dinosaur, princess, rocket..."
+              class="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-primary focus:outline-none text-lg"
+              autofocus
+            />
+            <button
+              type="button"
+              (click)="onSurpriseMe()"
+              class="bg-accent text-text px-6 py-3 rounded-xl font-semibold hover:bg-accent/80 transition-all whitespace-nowrap"
+            >
+              🎲 Surprise Me
+            </button>
+          </div>
+        </div>
+
+        <!-- Category Picker -->
+        <div class="mb-6">
+          <p class="text-sm font-semibold text-text mb-3">Or choose a category:</p>
+          <app-category-picker (categorySelected)="onCategorySelected($event)" />
+        </div>
+
+        <!-- Generate Button -->
+        <button
+          type="submit"
+          [disabled]="!keyword().trim() || generatorService.isLoading()"
+          class="w-full bg-primary text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95 shadow-md"
+        >
+          @if (generatorService.isLoading()) {
+            <span>Generating...</span>
+          } @else {
+            <span>Generate Coloring Page</span>
+          }
+        </button>
+      </form>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (generatorService.isLoading()) {
+    <div class="bg-white rounded-2xl shadow-lg p-12 text-center">
+      <div class="mb-6">
+        <div class="inline-block animate-bounce text-6xl">✏️</div>
+      </div>
+      <h3 class="text-2xl font-heading text-text mb-2">
+        Drawing your {{ keyword() }}...
+      </h3>
+      <p class="text-muted">This will just take a moment</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (generatorService.error() && !generatorService.isLoading()) {
+    <div class="bg-red-50 border-2 border-red-200 rounded-2xl p-6 text-center">
+      <div class="text-4xl mb-4">😢</div>
+      <h3 class="text-xl font-semibold text-red-700 mb-2">
+        Oops! Something went wrong
+      </h3>
+      <p class="text-red-600 mb-4">
+        {{ generatorService.error() }}
+      </p>
+      <button
+        (click)="onTryAnother()"
+        class="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors"
+      >
+        Try Again
+      </button>
+    </div>
+  }
+
+  <!-- Result -->
+  @if (generatorService.currentImage() && !generatorService.isLoading()) {
+    <app-image-result
+      [image]="generatorService.currentImage()!"
+      (generateAnother)="onGenerateAnother()"
+      (tryAnother)="onTryAnother()"
+    />
+  }
+</div>

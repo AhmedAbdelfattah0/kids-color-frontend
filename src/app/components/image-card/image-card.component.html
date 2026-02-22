@@ -1,0 +1,51 @@
+<div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all overflow-hidden group cursor-pointer">
+  <a [routerLink]="['/gallery', image.id]" class="block">
+    <!-- Image -->
+    <div class="aspect-square overflow-hidden bg-gray-50">
+      <img
+        [src]="image.imageUrl"
+        [alt]="image.keyword + ' coloring page'"
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        loading="lazy"
+      />
+    </div>
+
+    <!-- Info -->
+    <div class="p-4">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="font-semibold text-text capitalize truncate">
+          {{ image.keyword }}
+        </h3>
+        @if (image.downloadCount > 0) {
+          <span class="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded-full">
+            {{ image.downloadCount }} ⬇️
+          </span>
+        }
+      </div>
+
+      @if (image.category) {
+        <p class="text-xs text-muted capitalize">{{ image.category }}</p>
+      }
+    </div>
+  </a>
+
+  <!-- Action Buttons (visible on hover) -->
+  @if (showActions) {
+    <div class="px-4 pb-4 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div class="flex gap-2">
+        <button
+          (click)="onPrint(); $event.stopPropagation()"
+          class="flex-1 bg-primary text-white px-3 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors"
+        >
+          🖨️ Print
+        </button>
+        <button
+          (click)="onDownload(); $event.stopPropagation()"
+          class="flex-1 bg-secondary text-white px-3 py-2 rounded-lg text-sm font-semibold hover:bg-secondary/90 transition-colors"
+        >
+          ⬇️ Download
+        </button>
+      </div>
+    </div>
+  }
+</div>

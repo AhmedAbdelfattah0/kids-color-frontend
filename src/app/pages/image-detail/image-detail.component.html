@@ -1,0 +1,106 @@
+<div class="container mx-auto px-4 py-8">
+  @if (isLoading()) {
+    <div class="text-center py-16">
+      <div class="inline-block animate-spin text-6xl mb-4">🎨</div>
+      <p class="text-muted">Loading...</p>
+    </div>
+  } @else if (!image()) {
+    <div class="text-center py-16">
+      <div class="text-6xl mb-4">😢</div>
+      <h2 class="text-2xl font-heading text-text mb-4">Image not found</h2>
+      <a routerLink="/gallery" class="text-primary hover:underline">
+        Back to Gallery
+      </a>
+    </div>
+  } @else {
+    <div class="max-w-5xl mx-auto">
+      <!-- Back Button -->
+      <div class="mb-6">
+        <a routerLink="/gallery" class="inline-flex items-center gap-2 text-primary hover:underline">
+          ← Back to Gallery
+        </a>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8">
+        <!-- Image -->
+        <div class="printable-image">
+          <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <img
+              [src]="image()!.imageUrl"
+              [alt]="image()!.keyword + ' coloring page'"
+              class="w-full"
+            />
+          </div>
+        </div>
+
+        <!-- Details -->
+        <div>
+          <div class="bg-white rounded-2xl shadow-lg p-6">
+            <h1 class="text-3xl font-heading text-primary capitalize mb-4">
+              {{ image()!.keyword }}
+            </h1>
+
+            @if (image()!.category) {
+              <div class="mb-4">
+                <span class="inline-block bg-secondary/10 text-secondary px-3 py-1 rounded-full text-sm font-semibold capitalize">
+                  {{ image()!.category }}
+                </span>
+              </div>
+            }
+
+            <!-- Stats -->
+            <div class="flex gap-6 mb-6 text-sm text-muted">
+              <div>
+                <span class="font-semibold">{{ image()!.downloadCount }}</span> downloads
+              </div>
+              <div>
+                <span class="font-semibold">{{ image()!.printCount }}</span> prints
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-3 mb-6">
+              <button
+                (click)="onPrint()"
+                class="w-full bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary/90 transition-all hover:scale-105 active:scale-95"
+              >
+                🖨️ Print
+              </button>
+              <button
+                (click)="onDownload()"
+                class="w-full bg-secondary text-white px-6 py-3 rounded-xl font-semibold hover:bg-secondary/90 transition-all hover:scale-105 active:scale-95"
+              >
+                ⬇️ Download
+              </button>
+              <button
+                (click)="onGenerateSimilar()"
+                class="w-full bg-white border-2 border-primary text-primary px-6 py-3 rounded-xl font-semibold hover:bg-primary/5 transition-colors"
+              >
+                Generate Similar
+              </button>
+            </div>
+
+            <!-- Created Date -->
+            @if (image()!.createdAt) {
+              <p class="text-xs text-muted text-center">
+                Added {{ image()!.createdAt | date }}
+              </p>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Images -->
+      @if (image()!.relatedImages && image()!.relatedImages!.length > 0) {
+        <div class="mt-12">
+          <h2 class="text-2xl font-heading text-text mb-6">More {{ image()!.category }} Coloring Pages</h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            @for (related of image()!.relatedImages!; track related.id) {
+              <app-image-card [image]="related" [showActions]="false" />
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,107 @@
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 py-16 md:py-24">
+  <div class="container mx-auto px-4">
+    <div class="max-w-4xl mx-auto text-center">
+      <!-- Headline -->
+      <h1 class="text-4xl md:text-6xl font-heading text-primary mb-4">
+        Free Coloring Pages for Kids
+      </h1>
+      <p class="text-lg md:text-xl text-text mb-8 max-w-2xl mx-auto">
+        Generate and print unlimited coloring pages in seconds. No ads, no sign-up, always free.
+      </p>
+
+      <!-- Quick Generator -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 max-w-2xl mx-auto">
+        <form (submit)="onGenerate(); $event.preventDefault()" class="mb-6">
+          <div class="flex gap-3">
+            <input
+              type="text"
+              [(ngModel)]="keyword"
+              [ngModelOptions]="{standalone: true}"
+              placeholder="What do you want to color? (e.g., dinosaur, unicorn...)"
+              class="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-primary focus:outline-none text-lg"
+              autofocus
+            />
+            <button
+              type="submit"
+              [disabled]="!keyword().trim()"
+              class="bg-primary text-white px-8 py-3 rounded-xl font-semibold hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
+            >
+              Generate
+            </button>
+          </div>
+        </form>
+
+        <!-- Category Picker -->
+        <div class="mb-4">
+          <p class="text-sm text-muted mb-3 text-center">Or pick a category:</p>
+          <app-category-picker (categorySelected)="onCategorySelected($event)" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Popular This Week -->
+@if (popularImages().length > 0) {
+  <section class="py-16 bg-background">
+    <div class="container mx-auto px-4">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-3xl font-heading text-text">Popular This Week</h2>
+          <a routerLink="/gallery" class="text-primary hover:underline font-semibold">
+            View all →
+          </a>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          @for (image of popularImages(); track image.id) {
+            <app-image-card [image]="image" [showActions]="false" />
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+}
+
+<!-- Recently Added -->
+@if (recentImages().length > 0) {
+  <section class="py-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-3xl font-heading text-text">Recently Added</h2>
+          <a routerLink="/gallery" class="text-primary hover:underline font-semibold">
+            View all →
+          </a>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          @for (image of recentImages(); track image.id) {
+            <app-image-card [image]="image" [showActions]="false" />
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+}
+
+<!-- CTA Banner -->
+<section class="py-16 bg-gradient-to-r from-primary to-secondary">
+  <div class="container mx-auto px-4 text-center">
+    <div class="max-w-3xl mx-auto text-white">
+      <h2 class="text-3xl md:text-4xl font-heading mb-4">
+        Explore Thousands of Coloring Pages
+      </h2>
+      <p class="text-lg mb-8 opacity-90">
+        Browse our gallery of coloring pages created by parents like you
+      </p>
+      <a
+        routerLink="/gallery"
+        class="inline-block bg-white text-primary px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-all hover:scale-105 active:scale-95 shadow-lg"
+      >
+        Browse Gallery
+      </a>
+    </div>
+  </div>
+</section>

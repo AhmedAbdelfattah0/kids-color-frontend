@@ -1,0 +1,134 @@
+<div class="container mx-auto px-4 py-8">
+  <!-- Header -->
+  <div class="text-center mb-8">
+    <h1 class="text-3xl md:text-5xl font-heading text-primary mb-2">
+      Gallery
+    </h1>
+    <p class="text-muted">
+      Browse {{ galleryService.total() }} coloring pages created by parents like you
+    </p>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="max-w-2xl mx-auto mb-8">
+    <form (submit)="onSearch(); $event.preventDefault()">
+      <div class="flex gap-3">
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          [ngModelOptions]="{standalone: true}"
+          placeholder="Search for coloring pages..."
+          class="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-primary focus:outline-none"
+        />
+        <button
+          type="submit"
+          class="bg-primary text-white px-8 py-3 rounded-xl font-semibold hover:bg-primary/90 transition-all"
+        >
+          Search
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-2xl shadow-md p-4 mb-8">
+    <!-- Category Chips -->
+    <div class="mb-4">
+      <p class="text-sm font-semibold text-text mb-3">Category:</p>
+      <div class="flex flex-wrap gap-2">
+        <button
+          (click)="onCategoryFilter(null)"
+          [class.bg-primary]="selectedCategory() === null"
+          [class.text-white]="selectedCategory() === null"
+          [class.bg-gray-100]="selectedCategory() !== null"
+          [class.text-text]="selectedCategory() !== null"
+          class="px-4 py-2 rounded-full font-semibold transition-colors hover:scale-105"
+        >
+          All
+        </button>
+        @for (category of categories(); track category.id) {
+          <button
+            (click)="onCategoryFilter(category.id)"
+            [class.bg-primary]="selectedCategory() === category.id"
+            [class.text-white]="selectedCategory() === category.id"
+            [class.bg-gray-100]="selectedCategory() !== category.id"
+            [class.text-text]="selectedCategory() !== category.id"
+            class="px-4 py-2 rounded-full font-semibold transition-colors hover:scale-105"
+          >
+            {{ category.icon }} {{ category.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Sort Toggle -->
+    <div>
+      <p class="text-sm font-semibold text-text mb-3">Sort by:</p>
+      <div class="flex gap-2">
+        <button
+          (click)="onSortChange('newest')"
+          [class.bg-secondary]="sortBy() === 'newest'"
+          [class.text-white]="sortBy() === 'newest'"
+          [class.bg-gray-100]="sortBy() !== 'newest'"
+          [class.text-text]="sortBy() !== 'newest'"
+          class="px-4 py-2 rounded-full font-semibold transition-colors"
+        >
+          Newest
+        </button>
+        <button
+          (click)="onSortChange('popular')"
+          [class.bg-secondary]="sortBy() === 'popular'"
+          [class.text-white]="sortBy() === 'popular'"
+          [class.bg-gray-100]="sortBy() !== 'popular'"
+          [class.text-text]="sortBy() !== 'popular'"
+          class="px-4 py-2 rounded-full font-semibold transition-colors"
+        >
+          Most Popular
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gallery Grid -->
+  @if (galleryService.isLoading() && galleryService.images().length === 0) {
+    <div class="text-center py-16">
+      <div class="inline-block animate-spin text-6xl mb-4">🎨</div>
+      <p class="text-muted">Loading gallery...</p>
+    </div>
+  } @else if (galleryService.images().length === 0) {
+    <div class="text-center py-16">
+      <div class="text-6xl mb-4">🔍</div>
+      <h3 class="text-2xl font-heading text-text mb-2">No images found</h3>
+      <p class="text-muted mb-6">Try a different search or category</p>
+      <button
+        (click)="onCategoryFilter(null); searchQuery.set('')"
+        class="bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary/90 transition-all"
+      >
+        Clear Filters
+      </button>
+    </div>
+  } @else {
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-8">
+      @for (image of galleryService.images(); track image.id) {
+        <app-image-card [image]="image" />
+      }
+    </div>
+
+    <!-- Load More Button -->
+    @if (galleryService.hasMore()) {
+      <div class="text-center">
+        <button
+          (click)="onLoadMore()"
+          [disabled]="galleryService.isLoading()"
+          class="bg-secondary text-white px-8 py-3 rounded-xl font-semibold hover:bg-secondary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          @if (galleryService.isLoading()) {
+            <span>Loading...</span>
+          } @else {
+            <span>Load More</span>
+          }
+        </button>
+      </div>
+    }
+  }
+</div>

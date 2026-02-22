@@ -1,0 +1,90 @@
+<div class="bg-white rounded-2xl shadow-lg p-6 max-w-3xl mx-auto">
+  <!-- Cache Badge -->
+  @if (image.fromCache !== undefined) {
+    <div class="mb-4">
+      @if (image.fromCache) {
+        <span class="inline-flex items-center gap-1 bg-secondary/10 text-secondary px-3 py-1 rounded-full text-sm font-semibold">
+          ✓ From Library
+        </span>
+      } @else {
+        <span class="inline-flex items-center gap-1 bg-accent/20 text-primary px-3 py-1 rounded-full text-sm font-semibold">
+          ✨ Just Generated
+        </span>
+      }
+    </div>
+  }
+
+  <!-- Image Preview -->
+  <div class="printable-image mb-6">
+    <div class="aspect-square rounded-xl overflow-hidden bg-gray-50 border-2 border-gray-200">
+      <img
+        [src]="image.imageUrl"
+        [alt]="image.keyword + ' coloring page'"
+        class="w-full h-full object-contain"
+      />
+    </div>
+  </div>
+
+  <!-- Info -->
+  <div class="mb-6 text-center">
+    <h2 class="text-2xl font-heading text-text capitalize mb-2">
+      {{ image.keyword }}
+    </h2>
+    @if (image.category) {
+      <p class="text-muted capitalize">Category: {{ image.category }}</p>
+    }
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="grid grid-cols-2 gap-3 mb-4">
+    <button
+      (click)="onPrint()"
+      class="bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary/90 transition-all hover:scale-105 active:scale-95 shadow-md"
+    >
+      🖨️ Print
+    </button>
+    <button
+      (click)="onDownload()"
+      class="bg-secondary text-white px-6 py-3 rounded-xl font-semibold hover:bg-secondary/90 transition-all hover:scale-105 active:scale-95 shadow-md"
+    >
+      ⬇️ Download
+    </button>
+  </div>
+
+  <div class="grid grid-cols-2 gap-3">
+    <button
+      (click)="onGenerateAnother()"
+      class="bg-white border-2 border-primary text-primary px-4 py-2 rounded-xl font-semibold hover:bg-primary/5 transition-colors"
+    >
+      🔄 Generate Another
+    </button>
+    <button
+      (click)="onTryAnother()"
+      class="bg-white border-2 border-gray-300 text-text px-4 py-2 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
+    >
+      ✏️ Try Something Else
+    </button>
+  </div>
+
+  <!-- Share Button -->
+  <div class="mt-3">
+    <button
+      (click)="onShare()"
+      class="w-full bg-accent/20 text-text px-4 py-2 rounded-xl font-semibold hover:bg-accent/30 transition-colors"
+    >
+      🔗 Share
+    </button>
+  </div>
+
+  <!-- Stats -->
+  @if (image.downloadCount > 0 || image.printCount > 0) {
+    <div class="mt-4 pt-4 border-t border-gray-200 flex justify-center gap-4 text-sm text-muted">
+      @if (image.downloadCount > 0) {
+        <span>{{ image.downloadCount }} downloads</span>
+      }
+      @if (image.printCount > 0) {
+        <span>{{ image.printCount }} prints</span>
+      }
+    </div>
+  }
+</div>
