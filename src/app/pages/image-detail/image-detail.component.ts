@@ -52,12 +52,18 @@ export class ImageDetailComponent implements OnInit {
 
     await this.generatorService.recordDownload(img.id);
 
+    const response = await fetch(img.imageUrl);
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+
+    const ext = img.imageUrl.split('.').pop() || 'png';
     const link = document.createElement('a');
-    link.href = img.imageUrl;
-    link.download = `kidscolor-${img.keyword.replace(/\s+/g, '-')}.png`;
+    link.href = objectUrl;
+    link.download = `kidscolor-${img.keyword.replace(/\s+/g, '-')}.${ext}`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(objectUrl);
   }
 
   async onGenerateSimilar() {

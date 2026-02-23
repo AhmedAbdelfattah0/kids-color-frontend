@@ -25,16 +25,22 @@ export class ImageResultComponent {
   }
 
   async onDownload(): Promise<void> {
-    // Record download in backend
     await this.generatorService.recordDownload(this.image.id);
 
-    // Trigger download
+    // Fetch as blob first — required for cross-origin URLs where the
+    // <a download> attribute is ignored by the browser.
+    const response = await fetch(this.image.imageUrl);
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+
+    const ext = this.image.imageUrl.split('.').pop() || 'png';
     const link = document.createElement('a');
-    link.href = this.image.imageUrl;
-    link.download = `kidscolor-${this.image.keyword.replace(/\s+/g, '-')}.png`;
+    link.href = objectUrl;
+    link.download = `kidscolor-${this.image.keyword.replace(/\s+/g, '-')}.${ext}`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(objectUrl);
   }
 
   onGenerateAnother(): void {

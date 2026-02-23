@@ -1,32 +1,13 @@
-<div class="w-full overflow-x-auto scrollbar-hide">
-  <div class="flex gap-3 pb-2">
-    @for (category of categories(); track category.id) {
-      <button
-        (click)="onCategoryClick(category)"
-        class="flex-shrink-0 bg-white rounded-2xl shadow-md hover:shadow-lg transition-all p-4 min-w-[140px] hover:scale-105 active:scale-95 border-2 border-transparent hover:border-primary"
-      >
-        <div class="text-center">
-          <div class="text-3xl mb-2">{{ category.icon }}</div>
-          <div class="text-sm font-semibold text-text">{{ category.label }}</div>
-          <div class="mt-2 flex flex-wrap gap-1 justify-center">
-            @for (example of category.examples.slice(0, 2); track example) {
-              <span class="text-xs bg-background px-2 py-1 rounded-full text-muted">
-                {{ example }}
-              </span>
-            }
-          </div>
-        </div>
-      </button>
-    }
-  </div>
+<div class="grid grid-cols-4 gap-2 py-2">
+  @for (category of categories(); track category.id) {
+    <button
+      (click)="onCategoryClick(category)"
+      class="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all p-3 hover:scale-105 active:scale-95 border-2 border-transparent hover:border-primary"
+    >
+      <div class="text-center">
+        <div class="text-2xl mb-1">{{ category.icon }}</div>
+        <div class="text-xs font-semibold text-text truncate">{{ category.label }}</div>
+      </div>
+    </button>
+  }
 </div>
-
-<style>
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-</style>

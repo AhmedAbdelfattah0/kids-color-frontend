@@ -13,19 +13,30 @@ export class ImageCardComponent {
   @Input({ required: true }) image!: ImageRecord;
   @Input() showActions: boolean = true;
 
+  isPrinting = false;
+
   onPrint(): void {
-    const printWindow = window.open(this.image.imageUrl, '_blank');
-    if (printWindow) {
-      printWindow.onload = () => {
-        printWindow.print();
-      };
-    }
+    this.isPrinting = true;
+    setTimeout(() => {
+      window.print();
+      window.addEventListener('afterprint', () => {
+        this.isPrinting = false;
+      }, { once: true });
+    });
   }
 
-  onDownload(): void {
+  async onDownload(): Promise<void> {
+    const response = await fetch(this.image.imageUrl);
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+
+    const ext = this.image.imageUrl.split('.').pop() || 'png';
     const link = document.createElement('a');
-    link.href = this.image.imageUrl;
-    link.download = `kidscolor-${this.image.keyword.replace(/\s+/g, '-')}.png`;
+    link.href = objectUrl;
+    link.download = `kidscolor-${this.image.keyword.replace(/\s+/g, '-')}.${ext}`;
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(objectUrl);
   }
 }
