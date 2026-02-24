@@ -1,106 +1,114 @@
-<div class="container mx-auto px-4 py-8">
-  @if (isLoading()) {
-    <div class="text-center py-16">
-      <div class="inline-block animate-spin text-6xl mb-4">🎨</div>
-      <p class="text-muted">Loading...</p>
-    </div>
-  } @else if (!image()) {
-    <div class="text-center py-16">
-      <div class="text-6xl mb-4">😢</div>
-      <h2 class="text-2xl font-heading text-text mb-4">Image not found</h2>
-      <a routerLink="/gallery" class="text-primary hover:underline">
-        Back to Gallery
-      </a>
-    </div>
-  } @else {
-    <div class="max-w-5xl mx-auto">
-      <!-- Back Button -->
-      <div class="mb-6">
-        <a routerLink="/gallery" class="inline-flex items-center gap-2 text-primary hover:underline">
-          ← Back to Gallery
-        </a>
+<div class="min-h-screen bg-[#FFFBF5] py-8 px-4">
+
+  <!-- Back button -->
+  <button
+    (click)="goBack()"
+    class="flex items-center gap-2 text-gray-400 hover:text-[#FF6B35] transition-colors mb-6 text-sm font-medium">
+    ← Back to Gallery
+  </button>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading()" class="flex justify-center py-20">
+    <span class="text-5xl animate-spin block">🖍️</span>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error() && !isLoading()" class="text-center py-20">
+    <p class="text-gray-400 text-lg">{{ error() }}</p>
+    <button
+      (click)="goBack()"
+      class="mt-4 text-[#FF6B35] underline text-sm">
+      Go back
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="image() && !isLoading()" class="max-w-4xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+      <!-- Image preview -->
+      <div class="bg-white rounded-2xl shadow-md p-4">
+        <img
+          [src]="image()!.imageUrl"
+          [alt]="image()!.keyword"
+          class="w-full max-h-[500px] object-contain rounded-xl printable-image">
       </div>
 
-      <div class="grid lg:grid-cols-2 gap-8">
-        <!-- Image -->
-        <div class="printable-image">
-          <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <img
-              [src]="image()!.imageUrl"
-              [alt]="image()!.keyword + ' coloring page'"
-              class="w-full"
-            />
-          </div>
-        </div>
+      <!-- Details & Actions -->
+      <div class="flex flex-col gap-4">
 
-        <!-- Details -->
+        <!-- Title & meta -->
         <div>
-          <div class="bg-white rounded-2xl shadow-lg p-6">
-            <h1 class="text-3xl font-heading text-primary capitalize mb-4">
-              {{ image()!.keyword }}
-            </h1>
-
-            @if (image()!.category) {
-              <div class="mb-4">
-                <span class="inline-block bg-secondary/10 text-secondary px-3 py-1 rounded-full text-sm font-semibold capitalize">
-                  {{ image()!.category }}
-                </span>
-              </div>
-            }
-
-            <!-- Stats -->
-            <div class="flex gap-6 mb-6 text-sm text-muted">
-              <div>
-                <span class="font-semibold">{{ image()!.downloadCount }}</span> downloads
-              </div>
-              <div>
-                <span class="font-semibold">{{ image()!.printCount }}</span> prints
-              </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="space-y-3 mb-6">
-              <button
-                (click)="onPrint()"
-                class="w-full bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary/90 transition-all hover:scale-105 active:scale-95"
-              >
-                🖨️ Print
-              </button>
-              <button
-                (click)="onDownload()"
-                class="w-full bg-secondary text-white px-6 py-3 rounded-xl font-semibold hover:bg-secondary/90 transition-all hover:scale-105 active:scale-95"
-              >
-                ⬇️ Download
-              </button>
-              <button
-                (click)="onGenerateSimilar()"
-                class="w-full bg-white border-2 border-primary text-primary px-6 py-3 rounded-xl font-semibold hover:bg-primary/5 transition-colors"
-              >
-                Generate Similar
-              </button>
-            </div>
-
-            <!-- Created Date -->
-            @if (image()!.createdAt) {
-              <p class="text-xs text-muted text-center">
-                Added {{ image()!.createdAt | date }}
-              </p>
-            }
-          </div>
+          <h1 class="text-3xl font-bold text-gray-800 capitalize"
+            style="font-family: 'Fredoka One', sans-serif;">
+            {{ image()!.keyword }}
+          </h1>
+          <p class="text-gray-400 text-sm mt-1">
+            Added {{ image()!.createdAt | date:'mediumDate' }} ·
+            {{ image()!.downloadCount }} downloads
+          </p>
         </div>
+
+        <!-- Action buttons -->
+        <div class="flex flex-col gap-3">
+
+          <button
+            (click)="print()"
+            class="w-full bg-[#FF6B35] hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-2xl transition-all flex items-center justify-center gap-2">
+            🖨️ Print This Page
+          </button>
+
+          <button
+            (click)="download()"
+            class="w-full bg-[#4ECDC4] hover:bg-teal-500 text-white font-semibold py-3 px-6 rounded-2xl transition-all flex items-center justify-center gap-2">
+            ⬇️ Download PNG
+          </button>
+
+          <button
+            (click)="toggleFavorite()"
+            [class]="isFavorited()
+              ? 'w-full bg-[#FF6B35] text-white font-semibold py-3 px-6 rounded-2xl transition-all flex items-center justify-center gap-2'
+              : 'w-full bg-white border border-gray-200 text-gray-600 font-semibold py-3 px-6 rounded-2xl transition-all flex items-center justify-center gap-2 hover:shadow-md'">
+            {{ isFavorited() ? '❤️ Saved to Favorites' : '🤍 Save to Favorites' }}
+          </button>
+
+          <button
+            (click)="share()"
+            class="w-full bg-white border border-gray-200 text-gray-600 font-semibold py-3 px-6 rounded-2xl transition-all flex items-center justify-center gap-2 hover:shadow-md">
+            🔗 Copy Share Link
+          </button>
+
+          <button
+            (click)="generateSimilar()"
+            class="w-full bg-white border border-gray-200 text-gray-600 font-semibold py-3 px-6 rounded-2xl transition-all flex items-center justify-center gap-2 hover:shadow-md">
+            ✨ Generate Similar
+          </button>
+
+        </div>
+
+        <!-- Copied toast -->
+        <div
+          *ngIf="linkCopied()"
+          class="bg-green-100 text-green-700 text-sm text-center py-2 px-4 rounded-xl font-medium">
+          ✓ Link copied to clipboard!
+        </div>
+
       </div>
-
-      <!-- Related Images -->
-      @if (image()!.relatedImages && image()!.relatedImages!.length > 0) {
-        <div class="mt-12">
-          <h2 class="text-2xl font-heading text-text mb-6">More {{ image()!.category }} Coloring Pages</h2>
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            @for (related of image()!.relatedImages!; track related.id) {
-              <app-image-card [image]="related" [showActions]="false" />
-            }
-          </div>
-        </div>
-      }
     </div>
-  }
+
+    <!-- Related images -->
+    <div *ngIf="relatedImages().length > 0" class="mt-12">
+      <h2 class="text-xl font-bold text-gray-800 mb-4"
+        style="font-family: 'Fredoka One', sans-serif;">
+        More like this
+      </h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <app-image-card
+          *ngFor="let related of relatedImages()"
+          [image]="related">
+        </app-image-card>
+      </div>
+    </div>
+
+  </div>
 </div>

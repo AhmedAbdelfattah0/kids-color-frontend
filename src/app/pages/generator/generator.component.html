@@ -98,5 +98,15 @@
       (generateAnother)="onGenerateAnother()"
       (tryAnother)="onTryAnother()"
     />
+    <div class="mt-3 max-w-3xl mx-auto">
+      <button
+        (click)="share(generatorService.currentImage()!.id)"
+        class="w-full bg-white border-2 border-gray-200 text-gray-600 px-4 py-2 rounded-xl font-semibold hover:bg-gray-50 transition-colors">
+        🔗 Share
+      </button>
+      @if (linkCopied()) {
+        <p class="text-center text-green-600 text-sm mt-2 font-medium">✓ Link copied to clipboard!</p>
+      }
+    </div>
   }
 </div>

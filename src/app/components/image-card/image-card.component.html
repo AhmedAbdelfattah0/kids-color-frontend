@@ -1,51 +1,30 @@
-<div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all overflow-hidden group cursor-pointer">
-  <a [routerLink]="['/gallery', image.id]" class="block">
-    <!-- Image -->
-    <div class="aspect-square overflow-hidden bg-gray-50" [class.printable-image]="isPrinting">
-      <img
-        [src]="image.imageUrl"
-        [alt]="image.keyword + ' coloring page'"
-        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-        loading="lazy"
-      />
-    </div>
+<div
+  (click)="navigateToDetail()"
+  class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer hover:-translate-y-1 relative">
 
-    <!-- Info -->
-    <div class="p-4">
-      <div class="flex items-center justify-between mb-2">
-        <h3 class="font-semibold text-text capitalize truncate">
-          {{ image.keyword }}
-        </h3>
-        @if (image.downloadCount > 0) {
-          <span class="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded-full">
-            {{ image.downloadCount }} ⬇️
-          </span>
-        }
-      </div>
+  <!-- Image wrapper -->
+  <div class="relative aspect-square overflow-hidden">
+    <img
+      [src]="image.imageUrl"
+      [alt]="image.keyword"
+      class="w-full h-full object-cover">
 
-      @if (image.category) {
-        <p class="text-xs text-muted capitalize">{{ image.category }}</p>
-      }
-    </div>
-  </a>
+    <!-- Favorite button — visible on hover -->
+    <button
+      (click)="toggleFavorite($event)"
+      class="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 transform text-sm">
+      {{ isFavorited() ? '❤️' : '🤍' }}
+    </button>
+  </div>
 
-  <!-- Action Buttons (visible on hover) -->
-  @if (showActions) {
-    <div class="px-4 pb-4 opacity-0 group-hover:opacity-100 transition-opacity">
-      <div class="flex gap-2">
-        <button
-          (click)="onPrint(); $event.stopPropagation()"
-          class="flex-1 bg-primary text-white px-3 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors"
-        >
-          🖨️ Print
-        </button>
-        <button
-          (click)="onDownload(); $event.stopPropagation()"
-          class="flex-1 bg-secondary text-white px-3 py-2 rounded-lg text-sm font-semibold hover:bg-secondary/90 transition-colors"
-        >
-          ⬇️ Download
-        </button>
-      </div>
-    </div>
-  }
+  <!-- Card footer -->
+  <div class="px-3 py-2 flex items-center justify-between">
+    <span class="text-sm font-semibold text-gray-700 capitalize truncate">
+      {{ image.keyword }}
+    </span>
+    <span class="text-xs text-gray-400 whitespace-nowrap ml-2">
+      ⬇️ {{ image.downloadCount }}
+    </span>
+  </div>
+
 </div>

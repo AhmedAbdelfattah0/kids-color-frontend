@@ -11,7 +11,8 @@ import { CategoryService } from '../../services/category.service';
   selector: 'app-generator',
   standalone: true,
   imports: [CommonModule, FormsModule, CategoryPickerComponent, ImageResultComponent],
-  templateUrl: './generator.component.html'
+  templateUrl: './generator.component.html',
+  styleUrls: ['./generator.component.scss']
 })
 export class GeneratorComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -20,6 +21,7 @@ export class GeneratorComponent implements OnInit {
 
   keyword = signal('');
   selectedCategory = signal<string | undefined>(undefined);
+  linkCopied = signal(false);
 
   async ngOnInit() {
     // Check for keyword in query params
@@ -62,5 +64,16 @@ export class GeneratorComponent implements OnInit {
     this.generatorService.clearError();
     this.keyword.set('');
     this.selectedCategory.set(undefined);
+  }
+
+  share(imageId: string) {
+    const url = `${window.location.origin}/gallery/${imageId}`;
+    if (navigator.share) {
+      navigator.share({ title: 'Check out this coloring page on KidsColor!', url });
+    } else {
+      navigator.clipboard.writeText(url);
+      this.linkCopied.set(true);
+      setTimeout(() => this.linkCopied.set(false), 3000);
+    }
   }
 }

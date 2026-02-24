@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { ImageRecord, GalleryParams, GalleryResponse } from '../models/image.model';
 import { environment } from '../../environments/environment';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -162,5 +163,45 @@ export class GalleryService {
     this.images.set([]);
     this.currentPage.set(1);
     this.hasMore.set(true);
+  }
+
+  async getById(id: string): Promise<ImageRecord> {
+    const response = await fetch(`${this.apiUrl}/api/gallery/${id}`);
+    if (!response.ok) throw new Error('Image not found');
+    const image: ImageRecord = await response.json();
+    image.imageUrl = image.imageUrl.startsWith('http') ? image.imageUrl : `${this.apiUrl}${image.imageUrl}`;
+    return image;
+  }
+
+  async getRelated(category: string | undefined, excludeId: string): Promise<ImageRecord[]> {
+    if (!category) return [];
+    const response = await fetch(
+      `${this.apiUrl}/api/gallery?category=${category}&limit=8&exclude=${excludeId}`
+    );
+    if (!response.ok) return [];
+    const data = await response.json();
+    return (data.images as ImageRecord[])
+      .filter(img => img.id !== excludeId)
+      .map(img => ({
+        ...img,
+        imageUrl: img.imageUrl.startsWith('http') ? img.imageUrl : `${this.apiUrl}${img.imageUrl}`
+      }))
+      .slice(0, 6);
+  }
+
+  async recordDownload(id: string): Promise<void> {
+    try {
+      await fetch(`${this.apiUrl}/api/gallery/${id}/download`, { method: 'POST' });
+    } catch (error) {
+      console.error('Error recording download:', error);
+    }
+  }
+
+  async recordPrint(id: string): Promise<void> {
+    try {
+      await fetch(`${this.apiUrl}/api/gallery/${id}/print`, { method: 'POST' });
+    } catch (error) {
+      console.error('Error recording print:', error);
+    }
   }
 }

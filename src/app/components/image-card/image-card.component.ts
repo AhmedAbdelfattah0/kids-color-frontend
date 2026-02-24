@@ -1,42 +1,34 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
+import { FavoritesService } from '../../services/favorites.service';
 import { ImageRecord } from '../../models/image.model';
 
 @Component({
   selector: 'app-image-card',
+  templateUrl: './image-card.component.html',
+  styleUrls: ['./image-card.component.scss'],
   standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './image-card.component.html'
+  imports: [CommonModule]
 })
 export class ImageCardComponent {
-  @Input({ required: true }) image!: ImageRecord;
-  @Input() showActions: boolean = true;
+  @Input() image!: ImageRecord;
 
-  isPrinting = false;
+  private router = inject(Router);
+  private favoritesService = inject(FavoritesService);
 
-  onPrint(): void {
-    this.isPrinting = true;
-    setTimeout(() => {
-      window.print();
-      window.addEventListener('afterprint', () => {
-        this.isPrinting = false;
-      }, { once: true });
-    });
+  isFavorited = computed(() => this.favoritesService.isFavorited(this.image.id));
+
+  navigateToDetail() {
+    this.router.navigate(['/gallery', this.image.id]);
   }
 
-  async onDownload(): Promise<void> {
-    const response = await fetch(this.image.imageUrl);
-    const blob = await response.blob();
-    const objectUrl = URL.createObjectURL(blob);
-
-    const ext = this.image.imageUrl.split('.').pop() || 'png';
-    const link = document.createElement('a');
-    link.href = objectUrl;
-    link.download = `kidscolor-${this.image.keyword.replace(/\s+/g, '-')}.${ext}`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(objectUrl);
+  toggleFavorite(event: Event) {
+    event.stopPropagation();
+    if (this.isFavorited()) {
+      this.favoritesService.removeFavorite(this.image.id);
+    } else {
+      this.favoritesService.addFavorite(this.image);
+    }
   }
 }

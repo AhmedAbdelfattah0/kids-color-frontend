@@ -1,0 +1,80 @@
+<div class="min-h-screen bg-[#FFFBF5] py-8 px-4">
+  <div class="max-w-6xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-3xl font-bold text-gray-800"
+        style="font-family: 'Fredoka One', sans-serif;">
+        ❤️ My Favorites
+      </h1>
+      <button
+        *ngIf="favoritesService.favorites().length > 0"
+        (click)="confirmClearAll()"
+        class="text-sm text-gray-400 hover:text-red-400 transition-colors">
+        Clear all
+      </button>
+    </div>
+
+    <!-- Empty state -->
+    <div
+      *ngIf="favoritesService.favorites().length === 0"
+      class="flex flex-col items-center justify-center py-20 gap-3">
+      <span class="text-6xl">🤍</span>
+      <p class="text-gray-400 text-lg font-medium">No favorites yet</p>
+      <p class="text-gray-300 text-sm">Tap the heart on any coloring page to save it here</p>
+      <a
+        routerLink="/gallery"
+        class="mt-4 bg-[#FF6B35] hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-2xl transition-colors">
+        Browse Gallery
+      </a>
+    </div>
+
+    <!-- Favorites grid -->
+    <div
+      *ngIf="favoritesService.favorites().length > 0"
+      class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <app-image-card
+        *ngFor="let image of favoritesService.favorites()"
+        [image]="image">
+      </app-image-card>
+    </div>
+
+  </div>
+</div>
+
+<!-- Confirm modal -->
+<div
+  *ngIf="showConfirmModal()"
+  class="fixed inset-0 z-50 flex items-center justify-center px-4">
+
+  <!-- Backdrop -->
+  <div
+    (click)="cancelClear()"
+    class="absolute inset-0 bg-black/40 backdrop-blur-sm">
+  </div>
+
+  <!-- Modal card -->
+  <div class="relative bg-white rounded-3xl shadow-xl p-8 w-full max-w-sm flex flex-col items-center gap-4 z-10">
+    <span class="text-5xl">🗑️</span>
+    <h2 class="text-xl font-bold text-gray-800 text-center"
+      style="font-family: 'Fredoka One', sans-serif;">
+      Clear all favorites?
+    </h2>
+    <p class="text-gray-400 text-sm text-center">
+      This will remove all {{ favoritesService.favorites().length }} saved coloring pages. This can't be undone.
+    </p>
+    <div class="flex gap-3 w-full mt-2">
+      <button
+        (click)="cancelClear()"
+        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold py-3 rounded-2xl transition-colors">
+        Cancel
+      </button>
+      <button
+        (click)="executeClearAll()"
+        class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-2xl transition-colors">
+        Clear all
+      </button>
+    </div>
+  </div>
+
+</div>

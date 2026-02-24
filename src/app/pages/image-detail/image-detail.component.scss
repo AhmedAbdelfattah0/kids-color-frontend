@@ -1,0 +1,13 @@
+// Only print styles — everything else is handled by Tailwind
+@media print {
+  .printable-image {
+    max-height: 100vh;
+    width: 100%;
+  }
+
+  button,
+  .back-btn,
+  .related-section {
+    display: none !important;
+  }
+}
