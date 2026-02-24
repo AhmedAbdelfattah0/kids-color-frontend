@@ -1,0 +1,36 @@
+<div class="flex flex-col gap-4">
+
+  <!-- Difficulty -->
+  <div>
+    <p class="text-sm font-semibold text-gray-500 mb-2">Difficulty</p>
+    <div class="flex gap-2">
+      <button
+        *ngFor="let option of difficultyOptions"
+        (click)="setDifficulty(option.value)"
+        [class]="difficulty() === option.value
+          ? 'flex-1 flex flex-col items-center gap-1 py-3 px-2 rounded-2xl border-2 border-[#FF6B35] bg-orange-50 transition-all'
+          : 'flex-1 flex flex-col items-center gap-1 py-3 px-2 rounded-2xl border-2 border-gray-100 bg-white hover:border-orange-200 transition-all'">
+        <span class="text-xl">{{ option.emoji }}</span>
+        <span class="text-xs font-bold text-gray-700">{{ option.label }}</span>
+        <span class="text-[10px] text-gray-400 text-center leading-tight">{{ option.description }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Age Range -->
+  <div>
+    <p class="text-sm font-semibold text-gray-500 mb-2">Age Range</p>
+    <div class="flex gap-2">
+      <button
+        *ngFor="let option of ageOptions"
+        (click)="setAgeRange(option.value)"
+        [class]="ageRange() === option.value
+          ? 'flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border-2 border-[#4ECDC4] bg-teal-50 transition-all'
+          : 'flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border-2 border-gray-100 bg-white hover:border-teal-200 transition-all'">
+        <span class="text-lg">{{ option.emoji }}</span>
+        <span class="text-sm font-bold text-gray-700">{{ option.label }}</span>
+      </button>
+    </div>
+  </div>
+
+</div>

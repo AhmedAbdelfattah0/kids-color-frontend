@@ -6,6 +6,8 @@ import { CategoryPickerComponent } from '../../components/category-picker/catego
 import { ImageCardComponent } from '../../components/image-card/image-card.component';
 import { GalleryService } from '../../services/gallery.service';
 import { GeneratorService } from '../../services/generator.service';
+import { CategoryService } from '../../services/category.service';
+import { BulkSelectService } from '../../services/bulk-select.service';
 import { ImageRecord } from '../../models/image.model';
 
 @Component({
@@ -17,6 +19,8 @@ import { ImageRecord } from '../../models/image.model';
 export class HomeComponent implements OnInit {
   private galleryService = inject(GalleryService);
   private generatorService = inject(GeneratorService);
+  private categoryService = inject(CategoryService);
+  private bulkSelectService = inject(BulkSelectService);
   private router = inject(Router);
 
   keyword = signal('');
@@ -44,8 +48,15 @@ export class HomeComponent implements OnInit {
     this.isLoadingRecent.set(false);
   }
 
-  onCategorySelected(event: { categoryId: string; keyword: string }) {
-    this.keyword.set(event.keyword);
+  enterSelectionMode() {
+    this.bulkSelectService.enterSelectionMode();
+  }
+
+  onCategorySelected(categoryId: string | null) {
+    if (categoryId) {
+      const kw = this.categoryService.getRandomKeyword(categoryId);
+      this.keyword.set(kw);
+    }
   }
 
   async onGenerate() {

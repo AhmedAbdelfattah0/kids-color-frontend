@@ -30,6 +30,8 @@ export class GalleryService {
       if (params.category) httpParams = httpParams.set('category', params.category);
       if (params.sort) httpParams = httpParams.set('sort', params.sort);
       if (params.search) httpParams = httpParams.set('search', params.search);
+      if (params.difficulty) httpParams = httpParams.set('difficulty', params.difficulty);
+      if (params.ageRange) httpParams = httpParams.set('ageRange', params.ageRange);
 
       const response = await this.http.get<GalleryResponse>(
         `${this.apiUrl}/api/gallery`,

@@ -1,6 +1,21 @@
 <div
-  (click)="navigateToDetail()"
-  class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer hover:-translate-y-1 relative">
+  (click)="handleClick()"
+  (pointerdown)="onPointerDown()"
+  (pointerup)="onPointerUp()"
+  (pointerleave)="onPointerLeave()"
+  [class]="isSelected()
+    ? 'group bg-white rounded-2xl overflow-hidden shadow-sm cursor-pointer relative ring-4 ring-[#FF6B35] ring-offset-2 transition-all'
+    : 'group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer hover:-translate-y-1 relative'">
+
+  <!-- Selection checkbox -->
+  <div
+    *ngIf="isSelectionMode()"
+    class="absolute top-2 left-2 z-10 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all"
+    [class]="isSelected()
+      ? 'bg-[#FF6B35] border-[#FF6B35]'
+      : 'bg-white border-gray-300'">
+    <span *ngIf="isSelected()" class="text-white text-xs font-bold">✓</span>
+  </div>
 
   <!-- Image wrapper -->
   <div class="relative aspect-square overflow-hidden">
@@ -9,8 +24,9 @@
       [alt]="image.keyword"
       class="w-full h-full object-cover">
 
-    <!-- Favorite button — visible on hover -->
+    <!-- Favorite button — hidden in selection mode -->
     <button
+      *ngIf="!isSelectionMode()"
       (click)="toggleFavorite($event)"
       class="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 transform text-sm">
       {{ isFavorited() ? '❤️' : '🤍' }}

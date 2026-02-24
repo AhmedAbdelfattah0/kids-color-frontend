@@ -37,22 +37,29 @@ export class CategoryService {
     }
   }
 
+  async getCategories(): Promise<Category[]> {
+    if (this.categories().length === 0) {
+      await this.loadCategories();
+    }
+    return this.categories();
+  }
+
   getRandomKeyword(categoryId?: string): string {
     const categories = this.categories();
 
     if (categoryId) {
       const category = categories.find(c => c.id === categoryId);
-      if (category && category.examples.length > 0) {
-        const randomIndex = Math.floor(Math.random() * category.examples.length);
-        return category.examples[randomIndex];
+      if (category && category.keywords.length > 0) {
+        const randomIndex = Math.floor(Math.random() * category.keywords.length);
+        return category.keywords[randomIndex];
       }
     }
 
     // Get random from all categories
-    const allExamples = categories.flatMap(c => c.examples);
-    if (allExamples.length > 0) {
-      const randomIndex = Math.floor(Math.random() * allExamples.length);
-      return allExamples[randomIndex];
+    const allKeywords = categories.flatMap(c => c.keywords);
+    if (allKeywords.length > 0) {
+      const randomIndex = Math.floor(Math.random() * allKeywords.length);
+      return allKeywords[randomIndex];
     }
 
     return 'dinosaur'; // Fallback

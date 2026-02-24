@@ -1,12 +1,19 @@
 <div class="container mx-auto px-4 py-8">
   <!-- Header -->
-  <div class="text-center mb-8">
-    <h1 class="text-3xl md:text-5xl font-heading text-primary mb-2">
-      Gallery
-    </h1>
-    <p class="text-muted">
-      Browse {{ galleryService.total() }} coloring pages created by parents like you
-    </p>
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <h1 class="text-3xl md:text-4xl font-heading text-primary">
+        Gallery
+      </h1>
+      <p class="text-muted text-sm mt-1">
+        Browse {{ galleryService.total() }} coloring pages
+      </p>
+    </div>
+    <button
+      (click)="enterSelectionMode()"
+      class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:shadow-md transition-all">
+      ☑️ Select
+    </button>
   </div>
 
   <!-- Search Bar -->
@@ -55,7 +62,39 @@
             [class.text-text]="selectedCategory() !== category.id"
             class="px-4 py-2 rounded-full font-semibold transition-colors hover:scale-105"
           >
-            {{ category.icon }} {{ category.label }}
+            {{ category.emoji }} {{ category.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Difficulty filter -->
+    <div class="mb-3">
+      <p class="text-sm font-semibold text-text mb-2">Difficulty:</p>
+      <div class="flex gap-2 flex-wrap">
+        @for (option of difficultyOptions; track option.value) {
+          <button
+            (click)="difficultyFilter.set(option.value); loadGallery()"
+            [class]="difficultyFilter() === option.value
+              ? 'px-4 py-2 rounded-full text-sm font-semibold bg-[#FF6B35] text-white transition-all'
+              : 'px-4 py-2 rounded-full text-sm font-semibold bg-white text-gray-500 border border-gray-200 hover:shadow-md transition-all'">
+            {{ option.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Age filter -->
+    <div class="mb-4">
+      <p class="text-sm font-semibold text-text mb-2">Age Range:</p>
+      <div class="flex gap-2 flex-wrap">
+        @for (option of ageOptions; track option.value) {
+          <button
+            (click)="ageFilter.set(option.value); loadGallery()"
+            [class]="ageFilter() === option.value
+              ? 'px-4 py-2 rounded-full text-sm font-semibold bg-[#4ECDC4] text-white transition-all'
+              : 'px-4 py-2 rounded-full text-sm font-semibold bg-white text-gray-500 border border-gray-200 hover:shadow-md transition-all'">
+            {{ option.label }}
           </button>
         }
       </div>

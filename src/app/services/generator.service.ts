@@ -17,15 +17,20 @@ export class GeneratorService {
 
   constructor(private http: HttpClient) {}
 
-  async generate(keyword: string, category?: string, forceNew: boolean = false): Promise<void> {
+  async generate(
+    keyword: string,
+    options: { category?: string; forceNew?: boolean; difficulty?: string; ageRange?: string } = {}
+  ): Promise<void> {
     this.isLoading.set(true);
     this.error.set(null);
 
     try {
       const request: GenerateRequest = {
         keyword: keyword.trim(),
-        category,
-        forceNew
+        category: options.category,
+        forceNew: options.forceNew,
+        difficulty: options.difficulty,
+        ageRange: options.ageRange
       };
 
       const image = await this.http.post<ImageRecord>(

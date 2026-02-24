@@ -3,19 +3,22 @@ export interface ImageRecord {
   keyword: string;
   category?: string;
   imageUrl: string;
-  prompt?: string;
+  prompt: string;
   downloadCount: number;
   printCount: number;
   fromCache?: boolean;
+  source?: string;
   createdAt: string;
+  difficulty?: 'simple' | 'medium' | 'detailed';
+  ageRange?: '2-4' | '5-8' | '9-12';
   relatedImages?: ImageRecord[];
 }
 
 export interface Category {
   id: string;
   label: string;
-  icon: string;
-  examples: string[];
+  emoji: string;
+  keywords: string[];
 }
 
 export interface GalleryParams {
@@ -24,6 +27,8 @@ export interface GalleryParams {
   category?: string;
   sort?: 'newest' | 'popular';
   search?: string;
+  difficulty?: string;
+  ageRange?: string;
 }
 
 export interface GalleryResponse {
@@ -44,4 +49,6 @@ export interface GenerateRequest {
   keyword: string;
   category?: string;
   forceNew?: boolean;
+  difficulty?: string;
+  ageRange?: string;
 }

@@ -7,12 +7,20 @@
         style="font-family: 'Fredoka One', sans-serif;">
         ❤️ My Favorites
       </h1>
-      <button
-        *ngIf="favoritesService.favorites().length > 0"
-        (click)="confirmClearAll()"
-        class="text-sm text-gray-400 hover:text-red-400 transition-colors">
-        Clear all
-      </button>
+      <div class="flex items-center gap-3">
+        <button
+          *ngIf="favoritesService.favorites().length > 0"
+          (click)="enterSelectionMode()"
+          class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:shadow-md transition-all">
+          ☑️ Select
+        </button>
+        <button
+          *ngIf="favoritesService.favorites().length > 0"
+          (click)="confirmClearAll()"
+          class="text-sm text-gray-400 hover:text-red-400 transition-colors">
+          Clear all
+        </button>
+      </div>
     </div>
 
     <!-- Empty state -->

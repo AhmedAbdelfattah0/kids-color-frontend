@@ -49,9 +49,16 @@
       <div class="max-w-6xl mx-auto">
         <div class="flex items-center justify-between mb-8">
           <h2 class="text-3xl font-heading text-text">Popular This Week</h2>
-          <a routerLink="/gallery" class="text-primary hover:underline font-semibold">
-            View all →
-          </a>
+          <div class="flex items-center gap-3">
+            <button
+              (click)="enterSelectionMode()"
+              class="px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:shadow-md transition-all">
+              ☑️ Select
+            </button>
+            <a routerLink="/gallery" class="text-primary hover:underline font-semibold">
+              View all →
+            </a>
+          </div>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -71,9 +78,16 @@
       <div class="max-w-6xl mx-auto">
         <div class="flex items-center justify-between mb-8">
           <h2 class="text-3xl font-heading text-text">Recently Added</h2>
-          <a routerLink="/gallery" class="text-primary hover:underline font-semibold">
-            View all →
-          </a>
+          <div class="flex items-center gap-3">
+            <button
+              (click)="enterSelectionMode()"
+              class="px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:shadow-md transition-all">
+              ☑️ Select
+            </button>
+            <a routerLink="/gallery" class="text-primary hover:underline font-semibold">
+              View all →
+            </a>
+          </div>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
