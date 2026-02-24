@@ -1,8 +1,9 @@
-import { Component, Input, computed, inject } from '@angular/core';
+import { Component, Input, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FavoritesService } from '../../services/favorites.service';
 import { BulkSelectService } from '../../services/bulk-select.service';
+import { ZoomPreviewComponent } from '../zoom-preview/zoom-preview.component';
 import { ImageRecord } from '../../models/image.model';
 
 @Component({
@@ -10,7 +11,7 @@ import { ImageRecord } from '../../models/image.model';
   templateUrl: './image-card.component.html',
   styleUrls: ['./image-card.component.scss'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, ZoomPreviewComponent]
 })
 export class ImageCardComponent {
   @Input() image!: ImageRecord;
@@ -22,6 +23,7 @@ export class ImageCardComponent {
   isFavorited = computed(() => this.favoritesService.isFavorited(this.image.id));
   isSelectionMode = computed(() => this.bulkSelectService.isSelectionMode());
   isSelected = computed(() => this.bulkSelectService.isSelected(this.image.id));
+  isZoomed = signal(false);
 
   private longPressTimeout: ReturnType<typeof setTimeout> | null = null;
   private longPressJustFired = false;
@@ -72,5 +74,14 @@ export class ImageCardComponent {
     } else {
       this.favoritesService.addFavorite(this.image);
     }
+  }
+
+  openZoom(event: Event) {
+    event.stopPropagation();
+    this.isZoomed.set(true);
+  }
+
+  closeZoom() {
+    this.isZoomed.set(false);
   }
 }

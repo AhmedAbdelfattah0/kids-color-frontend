@@ -1,0 +1,98 @@
+<div class="min-h-screen bg-[#FFFBF5] py-8 px-4">
+  <div class="max-w-6xl mx-auto">
+
+    <!-- Back -->
+    <button (click)="goBack()"
+      class="flex items-center gap-2 text-gray-400 hover:text-[#FF6B35] transition-colors mb-6 text-sm font-medium">
+      ← Back to Packs
+    </button>
+
+    <!-- Error -->
+    <div *ngIf="error()" class="text-center py-20 text-gray-400">
+      {{ error() }}
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="pack()">
+
+      <!-- Pack header -->
+      <div class="bg-white rounded-2xl shadow-sm p-6 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <span class="text-5xl">{{ pack()!.emoji }}</span>
+          <div>
+            <h1 class="text-2xl font-bold text-gray-800"
+              style="font-family: 'Fredoka One', sans-serif;">
+              {{ pack()!.title }}
+            </h1>
+            <p class="text-sm text-gray-400 mt-1">{{ pack()!.description }}</p>
+          </div>
+        </div>
+
+        <button
+          (click)="printAll()"
+          [disabled]="isStreaming() || images().length === 0 || isExporting()"
+          [class]="isStreaming() || images().length === 0
+            ? 'px-6 py-3 bg-gray-200 text-gray-400 rounded-2xl font-semibold text-sm cursor-not-allowed'
+            : 'px-6 py-3 bg-[#FF6B35] hover:bg-orange-600 text-white rounded-2xl font-semibold text-sm transition-colors'">
+          {{ isExporting() ? '⏳ Exporting...' : '📄 Print All ' + images().length + ' Pages' }}
+        </button>
+      </div>
+
+      <!-- Progress bar — shown while streaming -->
+      <div *ngIf="isStreaming()" class="bg-white rounded-2xl shadow-sm p-5 mb-6">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-sm font-semibold text-gray-600">{{ statusMessage() }}</p>
+          <p class="text-xs text-gray-400">
+            {{ images().length }} / {{ progressTotal() }} pages
+          </p>
+        </div>
+        <div class="w-full bg-gray-100 rounded-full h-2.5">
+          <div
+            class="bg-[#FF6B35] h-2.5 rounded-full transition-all duration-500"
+            [style.width]="progressPercent + '%'">
+          </div>
+        </div>
+        <p class="text-xs text-gray-400 mt-2 text-right">{{ progressPercent }}%</p>
+      </div>
+
+      <!-- Ready banner — shown when complete -->
+      <div
+        *ngIf="!isStreaming() && images().length > 0"
+        class="bg-green-50 border border-green-100 rounded-2xl p-4 mb-6 flex items-center gap-3">
+        <span class="text-2xl">✅</span>
+        <div>
+          <p class="text-sm font-bold text-green-700">All {{ images().length }} pages are ready!</p>
+          <p class="text-xs text-green-500">These pages are cached — next visitors will load them instantly</p>
+        </div>
+      </div>
+
+      <!-- Images grid -->
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+
+        <!-- Generated images -->
+        <app-image-card
+          *ngFor="let image of images()"
+          [image]="image">
+        </app-image-card>
+
+        <!-- Skeleton placeholders for pending slots -->
+        <div
+          *ngFor="let i of [].constructor(progressTotal() - images().length)"
+          class="bg-white rounded-2xl overflow-hidden shadow-sm">
+          <div class="aspect-square bg-gray-100 animate-pulse flex items-center justify-center">
+            <span class="text-3xl opacity-30">🖍️</span>
+          </div>
+          <div class="px-3 py-2">
+            <div class="h-3 bg-gray-100 rounded-full animate-pulse w-3/4"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Bulk action bar -->
+    <app-bulk-action-bar></app-bulk-action-bar>
+
+  </div>
+</div>

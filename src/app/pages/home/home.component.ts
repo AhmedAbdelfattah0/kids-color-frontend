@@ -8,6 +8,7 @@ import { GalleryService } from '../../services/gallery.service';
 import { GeneratorService } from '../../services/generator.service';
 import { CategoryService } from '../../services/category.service';
 import { BulkSelectService } from '../../services/bulk-select.service';
+import { PacksService, Pack } from '../../services/packs.service';
 import { ImageRecord } from '../../models/image.model';
 
 @Component({
@@ -21,16 +22,18 @@ export class HomeComponent implements OnInit {
   private generatorService = inject(GeneratorService);
   private categoryService = inject(CategoryService);
   private bulkSelectService = inject(BulkSelectService);
+  private packsService = inject(PacksService);
   private router = inject(Router);
 
   keyword = signal('');
   popularImages = signal<ImageRecord[]>([]);
   recentImages = signal<ImageRecord[]>([]);
+  featuredPacks = signal<Pack[]>([]);
   isLoadingPopular = signal(false);
   isLoadingRecent = signal(false);
 
   async ngOnInit() {
-    await this.loadImages();
+    await Promise.all([this.loadImages(), this.loadFeaturedPacks()]);
   }
 
   async loadImages() {
@@ -46,6 +49,11 @@ export class HomeComponent implements OnInit {
     this.recentImages.set(recent);
     this.isLoadingPopular.set(false);
     this.isLoadingRecent.set(false);
+  }
+
+  async loadFeaturedPacks() {
+    const packs = await this.packsService.loadPacks();
+    this.featuredPacks.set(packs.slice(0, 4));
   }
 
   enterSelectionMode() {
@@ -66,5 +74,19 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/generate'], {
       queryParams: { keyword: kw }
     });
+  }
+
+  getDifficultyClass(difficulty: string): string {
+    const map: Record<string, string> = {
+      simple:   'bg-green-100 text-green-700',
+      medium:   'bg-yellow-100 text-yellow-700',
+      detailed: 'bg-purple-100 text-purple-700',
+    };
+    return map[difficulty] || 'bg-gray-100 text-gray-600';
+  }
+
+  getDifficultyLabel(difficulty: string): string {
+    const map: Record<string, string> = { simple: 'Easy', medium: 'Medium', detailed: 'Detailed' };
+    return map[difficulty] || difficulty;
   }
 }

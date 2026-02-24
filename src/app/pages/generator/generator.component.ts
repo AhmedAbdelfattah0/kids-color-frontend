@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CategoryPickerComponent } from '../../components/category-picker/category-picker.component';
 import { ImageResultComponent } from '../../components/image-result/image-result.component';
 import { GenerationFiltersComponent, GenerationFilters } from '../../components/generation-filters/generation-filters.component';
+import { ColorPaletteComponent } from '../../components/color-palette/color-palette.component';
 import { GeneratorService } from '../../services/generator.service';
 import { CategoryService } from '../../services/category.service';
 import { SearchHistoryService } from '../../services/search-history.service';
@@ -12,7 +13,7 @@ import { SearchHistoryService } from '../../services/search-history.service';
 @Component({
   selector: 'app-generator',
   standalone: true,
-  imports: [CommonModule, FormsModule, CategoryPickerComponent, ImageResultComponent, GenerationFiltersComponent],
+  imports: [CommonModule, FormsModule, CategoryPickerComponent, ImageResultComponent, GenerationFiltersComponent, ColorPaletteComponent],
   templateUrl: './generator.component.html',
   styleUrls: ['./generator.component.scss']
 })

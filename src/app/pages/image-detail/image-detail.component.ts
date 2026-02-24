@@ -4,6 +4,9 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { GalleryService } from '../../services/gallery.service';
 import { FavoritesService } from '../../services/favorites.service';
 import { ImageCardComponent } from '../../components/image-card/image-card.component';
+import { ColorPaletteComponent } from '../../components/color-palette/color-palette.component';
+import { ImageCustomizerComponent } from '../../components/image-customizer/image-customizer.component';
+import { ZoomPreviewComponent } from '../../components/zoom-preview/zoom-preview.component';
 import { ImageRecord } from '../../models/image.model';
 
 @Component({
@@ -11,7 +14,7 @@ import { ImageRecord } from '../../models/image.model';
   templateUrl: './image-detail.component.html',
   styleUrls: ['./image-detail.component.scss'],
   standalone: true,
-  imports: [CommonModule, DatePipe, ImageCardComponent]
+  imports: [CommonModule, DatePipe, ImageCardComponent, ColorPaletteComponent, ImageCustomizerComponent, ZoomPreviewComponent]
 })
 export class ImageDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -24,6 +27,7 @@ export class ImageDetailComponent implements OnInit {
   isLoading = signal(true);
   error = signal<string | null>(null);
   linkCopied = signal(false);
+  isZoomed = signal(false);
 
   isFavorited = computed(() => {
     const img = this.image();

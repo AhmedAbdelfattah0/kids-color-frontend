@@ -37,6 +37,11 @@
           {{ favoritesCount() }}
         </span>
       </a>
+      <a routerLink="/packs"
+        routerLinkActive="text-[#FF6B35]"
+        class="text-sm font-semibold text-gray-500 hover:text-[#FF6B35] transition-colors">
+        🎁 Packs
+      </a>
     </nav>
 
     <!-- Mobile menu button -->
@@ -72,6 +77,10 @@
         class="bg-[#FF6B35] text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
         {{ favoritesCount() }}
       </span>
+    </a>
+    <a routerLink="/packs" (click)="toggleMenu()"
+      class="text-sm font-semibold text-gray-600 hover:text-[#FF6B35] transition-colors">
+      🎁 Packs
     </a>
   </div>
 

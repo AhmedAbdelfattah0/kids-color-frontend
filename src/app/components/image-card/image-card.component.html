@@ -24,13 +24,24 @@
       [alt]="image.keyword"
       class="w-full h-full object-cover">
 
-    <!-- Favorite button — hidden in selection mode -->
-    <button
-      *ngIf="!isSelectionMode()"
-      (click)="toggleFavorite($event)"
-      class="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 transform text-sm">
-      {{ isFavorited() ? '❤️' : '🤍' }}
-    </button>
+    <!-- Hover overlay buttons — hidden in selection mode -->
+    <div *ngIf="!isSelectionMode()" class="absolute inset-0 flex items-start justify-end p-2 gap-1">
+
+      <!-- Zoom button -->
+      <button
+        (click)="openZoom($event)"
+        class="bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 transform text-sm">
+        🔍
+      </button>
+
+      <!-- Favorite button -->
+      <button
+        (click)="toggleFavorite($event)"
+        class="bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 transform text-sm">
+        {{ isFavorited() ? '❤️' : '🤍' }}
+      </button>
+
+    </div>
   </div>
 
   <!-- Card footer -->
@@ -44,3 +55,11 @@
   </div>
 
 </div>
+
+<!-- Zoom Modal -->
+<app-zoom-preview
+  *ngIf="isZoomed()"
+  [imageUrl]="image.imageUrl"
+  [keyword]="image.keyword"
+  (close)="closeZoom()">
+</app-zoom-preview>

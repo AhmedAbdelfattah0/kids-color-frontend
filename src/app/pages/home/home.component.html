@@ -42,6 +42,46 @@
   </div>
 </section>
 
+<!-- Featured Packs -->
+@if (featuredPacks().length > 0) {
+  <section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-3xl font-heading text-text">🎁 Print Packs</h2>
+          <a routerLink="/packs" class="text-primary hover:underline font-semibold text-sm">
+            View all →
+          </a>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          @for (pack of featuredPacks(); track pack.id) {
+            <a
+              [routerLink]="['/packs', pack.id]"
+              class="bg-[#FFFBF5] rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1 overflow-hidden block">
+              <div class="py-6 text-center">
+                <span class="text-5xl">{{ pack.emoji }}</span>
+              </div>
+              <div class="px-3 pb-4">
+                <p class="text-sm font-bold text-gray-800 text-center mb-2" style="font-family: 'Fredoka One', sans-serif;">
+                  {{ pack.title }}
+                </p>
+                <div class="flex flex-wrap gap-1 justify-center">
+                  <span [class]="'px-2 py-0.5 rounded-full text-xs font-semibold ' + getDifficultyClass(pack.difficulty)">
+                    {{ getDifficultyLabel(pack.difficulty) }}
+                  </span>
+                  <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+                    Ages {{ pack.ageRange }}
+                  </span>
+                </div>
+              </div>
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+}
+
 <!-- Popular This Week -->
 @if (popularImages().length > 0) {
   <section class="py-16 bg-background">

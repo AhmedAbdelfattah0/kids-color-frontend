@@ -27,11 +27,23 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
       <!-- Image preview -->
-      <div class="bg-white rounded-2xl shadow-md p-4">
-        <img
-          [src]="image()!.imageUrl"
-          [alt]="image()!.keyword"
-          class="w-full max-h-[500px] object-contain rounded-xl printable-image">
+      <div>
+        <div class="bg-white rounded-2xl shadow-md p-4 relative group">
+          <img
+            [src]="image()!.imageUrl"
+            [alt]="image()!.keyword"
+            class="w-full max-h-[500px] object-contain rounded-xl printable-image">
+
+          <!-- Zoom button overlaid on image -->
+          <button
+            (click)="isZoomed.set(true)"
+            class="absolute top-6 right-6 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 transform text-lg">
+            🔍
+          </button>
+        </div>
+
+        <!-- Color Palette below image -->
+        <app-color-palette [category]="image()!.category" class="block mt-4"></app-color-palette>
       </div>
 
       <!-- Details & Actions -->
@@ -93,6 +105,9 @@
           ✓ Link copied to clipboard!
         </div>
 
+        <!-- Image Customizer -->
+        <app-image-customizer [image]="image()!"></app-image-customizer>
+
       </div>
     </div>
 
@@ -112,3 +127,11 @@
 
   </div>
 </div>
+
+<!-- Zoom Modal -->
+<app-zoom-preview
+  *ngIf="isZoomed() && image()"
+  [imageUrl]="image()!.imageUrl"
+  [keyword]="image()!.keyword"
+  (close)="isZoomed.set(false)">
+</app-zoom-preview>

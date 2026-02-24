@@ -22,6 +22,14 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/favorites/favorites.component').then(m => m.FavoritesComponent)
   },
   {
+    path: 'packs',
+    loadComponent: () => import('./pages/packs/packs.component').then(m => m.PacksComponent)
+  },
+  {
+    path: 'packs/:id',
+    loadComponent: () => import('./pages/pack-detail/pack-detail.component').then(m => m.PackDetailComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }
