@@ -1,9 +1,8 @@
-import { Component, Input, AfterViewInit, ViewChild, ElementRef, signal, Injector, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, AfterViewInit, ViewChild, ElementRef, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ImageRecord } from '../../models/image.model';
-
-type Position = 'above' | 'below' | 'top' | 'bottom';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-image-customizer',
@@ -14,10 +13,14 @@ type Position = 'above' | 'below' | 'top' | 'bottom';
 })
 export class ImageCustomizerComponent implements AfterViewInit {
   @Input() image!: ImageRecord;
+  @Input() initialTopText: string = '';
+  @Input() initialBottomText: string = '';
+  @Output() customizedImageReady = new EventEmitter<string>();
+
   @ViewChild('previewCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  text = signal('');
-  position = signal<Position>('below');
+  topText = signal('');
+  bottomText = signal('');
   fontColor = signal('#1a1a1a');
   fontSize = signal(36);
   isLoading = signal(true);
@@ -25,13 +28,6 @@ export class ImageCustomizerComponent implements AfterViewInit {
 
   private loadedImage: HTMLImageElement | null = null;
   private canvasReady = false;
-
-  readonly positions: { value: Position; label: string }[] = [
-    { value: 'above',  label: 'Above Image' },
-    { value: 'below',  label: 'Below Image' },
-    { value: 'top',    label: 'On Image Top' },
-    { value: 'bottom', label: 'On Image Bottom' },
-  ];
 
   readonly colorOptions = [
     { value: '#1a1a1a', label: 'Black' },
@@ -44,11 +40,19 @@ export class ImageCustomizerComponent implements AfterViewInit {
 
   async ngAfterViewInit() {
     await this.loadImageForCanvas();
+    if (this.initialTopText) this.topText.set(this.initialTopText);
+    if (this.initialBottomText) this.bottomText.set(this.initialBottomText);
     this.canvasReady = true;
     this.drawCanvas();
   }
 
   private async loadImageForCanvas(): Promise<void> {
+    // External URLs (R2) are routed through the backend proxy so the canvas
+    // stays untainted and toBlob() / download works.
+    const src = this.image.imageUrl?.startsWith('http')
+      ? `${environment.apiUrl}/api/image-proxy?url=${encodeURIComponent(this.image.imageUrl)}`
+      : this.image.imageUrl;
+
     return new Promise<void>((resolve) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
@@ -58,30 +62,20 @@ export class ImageCustomizerComponent implements AfterViewInit {
         resolve();
       };
       img.onerror = () => {
-        // Retry without crossOrigin as fallback
-        const img2 = new Image();
-        img2.onload = () => {
-          this.loadedImage = img2;
-          this.isLoading.set(false);
-          resolve();
-        };
-        img2.onerror = () => {
-          this.isLoading.set(false);
-          resolve();
-        };
-        img2.src = `${this.image.imageUrl}?t=${Date.now()}`;
+        this.isLoading.set(false);
+        resolve();
       };
-      img.src = this.image.imageUrl;
+      img.src = src;
     });
   }
 
-  onTextInput(value: string) {
-    this.text.set(value.slice(0, 40));
+  onTopTextInput(value: string) {
+    this.topText.set(value.slice(0, 40));
     this.drawCanvas();
   }
 
-  setPosition(pos: Position) {
-    this.position.set(pos);
+  onBottomTextInput(value: string) {
+    this.bottomText.set(value.slice(0, 60));
     this.drawCanvas();
   }
 
@@ -101,71 +95,43 @@ export class ImageCustomizerComponent implements AfterViewInit {
     const canvas = this.canvasRef.nativeElement;
     const ctx = canvas.getContext('2d')!;
     const img = this.loadedImage;
-    const text = this.text();
-    const pos = this.position();
+    const topTxt = this.topText();
+    const bottomTxt = this.bottomText();
     const color = this.fontColor();
-    const size = this.fontSize();
+    const topSize = this.fontSize();
+    const bottomSize = Math.max(18, Math.round(topSize * 0.65));
     const imgSize = 512;
-    const padding = 16;
-    const textAreaH = size + padding * 2;
+    const padding = 14;
+    const topStripH = topTxt ? topSize + padding * 2 : 0;
+    const bottomStripH = bottomTxt ? bottomSize + padding * 2 : 0;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.width = imgSize;
+    canvas.height = imgSize + topStripH + bottomStripH;
 
-    if (pos === 'above') {
-      canvas.width = imgSize;
-      canvas.height = imgSize + textAreaH;
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, textAreaH, imgSize, imgSize);
-      if (text) {
-        ctx.font = `bold ${size}px Arial, sans-serif`;
-        ctx.fillStyle = color;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(text, imgSize / 2, textAreaH / 2, imgSize - 24);
-      }
-    } else if (pos === 'below') {
-      canvas.width = imgSize;
-      canvas.height = imgSize + textAreaH;
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, imgSize, imgSize);
-      if (text) {
-        ctx.font = `bold ${size}px Arial, sans-serif`;
-        ctx.fillStyle = color;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(text, imgSize / 2, imgSize + textAreaH / 2, imgSize - 24);
-      }
-    } else if (pos === 'top') {
-      canvas.width = imgSize;
-      canvas.height = imgSize;
-      ctx.drawImage(img, 0, 0, imgSize, imgSize);
-      if (text) {
-        ctx.fillStyle = 'rgba(0,0,0,0.45)';
-        ctx.fillRect(0, 0, imgSize, textAreaH);
-        ctx.font = `bold ${size}px Arial, sans-serif`;
-        ctx.fillStyle = color;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(text, imgSize / 2, textAreaH / 2, imgSize - 24);
-      }
-    } else {
-      // bottom overlay
-      canvas.width = imgSize;
-      canvas.height = imgSize;
-      ctx.drawImage(img, 0, 0, imgSize, imgSize);
-      if (text) {
-        const overlayY = imgSize - textAreaH;
-        ctx.fillStyle = 'rgba(0,0,0,0.45)';
-        ctx.fillRect(0, overlayY, imgSize, textAreaH);
-        ctx.font = `bold ${size}px Arial, sans-serif`;
-        ctx.fillStyle = color;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(text, imgSize / 2, overlayY + textAreaH / 2, imgSize - 24);
-      }
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.drawImage(img, 0, topStripH, imgSize, imgSize);
+
+    const fontStack = '"Fredoka One", "Arial Rounded MT Bold", Arial, sans-serif';
+
+    if (topTxt) {
+      ctx.font = `bold ${topSize}px ${fontStack}`;
+      ctx.fillStyle = color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(topTxt, imgSize / 2, topStripH / 2, imgSize - 24);
     }
+
+    if (bottomTxt) {
+      ctx.font = `${bottomSize}px ${fontStack}`;
+      ctx.fillStyle = color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(bottomTxt, imgSize / 2, imgSize + topStripH + bottomStripH / 2, imgSize - 24);
+    }
+
+    this.customizedImageReady.emit(canvas.toDataURL('image/png'));
   }
 
   downloadCustomized() {

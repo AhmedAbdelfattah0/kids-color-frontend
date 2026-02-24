@@ -1,34 +1,34 @@
 <div class="bg-white rounded-2xl shadow-sm p-5 mt-4">
   <h3 class="text-sm font-bold text-gray-700 mb-4">✏️ Personalize This Page</h3>
 
-  <!-- Text Input -->
+  <!-- Top Text (Child's Name) -->
   <div class="mb-4">
     <label class="text-xs font-semibold text-gray-500 block mb-1">
-      Child's Name or Message
-      <span class="font-normal text-gray-400">({{ text().length }}/40)</span>
+      👶 Child's Name
+      <span class="font-normal text-gray-400">({{ topText().length }}/40)</span>
     </label>
     <input
       type="text"
-      [value]="text()"
-      (input)="onTextInput($any($event.target).value)"
-      placeholder="e.g. Emma's Coloring Page"
+      [value]="topText()"
+      (input)="onTopTextInput($any($event.target).value)"
+      placeholder="e.g. Emma"
       maxlength="40"
       class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#FF6B35] transition-colors" />
   </div>
 
-  <!-- Position -->
+  <!-- Bottom Text (Message) -->
   <div class="mb-4">
-    <label class="text-xs font-semibold text-gray-500 block mb-2">Text Position</label>
-    <div class="grid grid-cols-2 gap-2">
-      <button
-        *ngFor="let p of positions"
-        (click)="setPosition(p.value)"
-        [class]="position() === p.value
-          ? 'px-3 py-2 rounded-xl text-xs font-semibold bg-[#FF6B35] text-white transition-colors'
-          : 'px-3 py-2 rounded-xl text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors'">
-        {{ p.label }}
-      </button>
-    </div>
+    <label class="text-xs font-semibold text-gray-500 block mb-1">
+      💌 Message
+      <span class="font-normal text-gray-400">({{ bottomText().length }}/60)</span>
+    </label>
+    <input
+      type="text"
+      [value]="bottomText()"
+      (input)="onBottomTextInput($any($event.target).value)"
+      placeholder="e.g. Happy Birthday! 🎉"
+      maxlength="60"
+      class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#FF6B35] transition-colors" />
   </div>
 
   <!-- Font Color -->
@@ -50,7 +50,7 @@
   <!-- Font Size -->
   <div class="mb-5">
     <label class="text-xs font-semibold text-gray-500 block mb-1">
-      Font Size: {{ fontSize() }}px
+      Name Size: {{ fontSize() }}px
     </label>
     <input
       type="range"

@@ -1,4 +1,4 @@
-import { Component, Input, computed, signal, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FavoritesService } from '../../services/favorites.service';
@@ -15,6 +15,7 @@ import { ImageRecord } from '../../models/image.model';
 })
 export class ImageCardComponent {
   @Input() image!: ImageRecord;
+  @Output() cardClick = new EventEmitter<ImageRecord>();
 
   private router = inject(Router);
   private favoritesService = inject(FavoritesService);
@@ -57,6 +58,8 @@ export class ImageCardComponent {
     }
     if (this.isSelectionMode()) {
       this.bulkSelectService.toggleSelection(this.image);
+    } else if (this.cardClick.observed) {
+      this.cardClick.emit(this.image);
     } else {
       this.router.navigate(['/gallery', this.image.id]);
     }

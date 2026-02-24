@@ -30,6 +30,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/pack-detail/pack-detail.component').then(m => m.PackDetailComponent)
   },
   {
+    path: 'birthday',
+    loadComponent: () => import('./pages/birthday/birthday.component').then(m => m.BirthdayComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

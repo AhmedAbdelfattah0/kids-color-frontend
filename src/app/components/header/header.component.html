@@ -42,6 +42,11 @@
         class="text-sm font-semibold text-gray-500 hover:text-[#FF6B35] transition-colors">
         🎁 Packs
       </a>
+      <a routerLink="/birthday"
+        routerLinkActive="text-[#FF6B35]"
+        class="text-sm font-semibold text-gray-500 hover:text-[#FF6B35] transition-colors">
+        🎂 Birthday
+      </a>
     </nav>
 
     <!-- Mobile menu button -->
@@ -81,6 +86,10 @@
     <a routerLink="/packs" (click)="toggleMenu()"
       class="text-sm font-semibold text-gray-600 hover:text-[#FF6B35] transition-colors">
       🎁 Packs
+    </a>
+    <a routerLink="/birthday" (click)="toggleMenu()"
+      class="text-sm font-semibold text-gray-600 hover:text-[#FF6B35] transition-colors">
+      🎂 Birthday
     </a>
   </div>
 
