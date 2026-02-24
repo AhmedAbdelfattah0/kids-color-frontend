@@ -54,13 +54,22 @@ export class ImageDetailComponent implements OnInit {
     window.print();
   }
 
-  download() {
+  async download() {
     const image = this.image()!;
     this.galleryService.recordDownload(image.id);
+
+    const response = await fetch(image.imageUrl);
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+
+    const ext = image.imageUrl.split('.').pop() || 'png';
     const link = document.createElement('a');
-    link.href = image.imageUrl;
-    link.download = `kidscolor-${image.keyword}.png`;
+    link.href = objectUrl;
+    link.download = `kidscolor-${image.keyword.replace(/\s+/g, '-')}.${ext}`;
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(objectUrl);
   }
 
   toggleFavorite() {
